@@ -197,16 +197,15 @@ Once you get an email that your code has finished running, you will be able to a
 
 The **automation_errors** file will contain information of high level errors such as hitting the runtime limit or robots leaving the playfield. This will not have any errors your user code may hit so please be sure to use the logging features to assist with debugging. 
 
-<ins> Runtime limit </ins>: If you receive an email saying that your code hit the time limit, please make sure your code hits its return conditions properly or reduce the runtime of your code. You will still receive all the information above for the length of time your algorithm ran and access it in the same way.
+<ins> Runtime limit</ins>: If you receive an email saying that your code hit the time limit, please make sure your code hits its return conditions properly or reduce the runtime of your code. You will still receive all the information above for the length of time your algorithm ran and access it in the same way.
 
-<ins> Robot out of Bounds </ins>: If you receive an email or see in your **automation_errors** file that some robots went out of bounds, please make sure that your code keeps the robots within the playfield. The message in the file should specify the offending robot and the position it left the field to help with debugging. You will still receive all the information above for the length of time your algorithm ran and access it in the same way.
+<ins> Robot out of Bounds</ins>: If you receive an email or see in your **automation_errors** file that some robots went out of bounds, please make sure that your code keeps the robots within the playfield. The message in the file should specify the offending robot and the position it left the field to help with debugging. You will still receive all the information above for the length of time your algorithm ran and access it in the same way.
 
 ### Other Troubleshooting
 
-<ins> Git Merge Conflict </ins> : If you see this error on your local computer when you attempt to push your code folder, first make sure you have a copy of this folder and its contents somewhere on your local computer outside of the repo. If you encounter a git merge error, please do not override anything at the Head. This simply means that your local repo is not up to date with the remote repo and what you are trying to push directly affects these differences. The easiest way is to keep the changes at the Head and check that what you’re uploading has a different name than any of the newly pulled folders. (Ex. if someone uploaded a folder named swarm_test which happens to be the folder name you were using, change your folder name and that should resolve the conflict)
+<ins> Git Merge Conflict</ins>: If you see this error on your local computer when you attempt to push your code folder, first make sure you have a copy of this folder and its contents somewhere on your local computer outside of the repo. If you encounter a git merge error, please do not override anything at the Head. This simply means that your local repo is not up to date with the remote repo and what you are trying to push directly affects these differences. The easiest way is to keep the changes at the Head and check that what you’re uploading has a different name than any of the newly pulled folders. (Ex. if someone uploaded a folder named swarm_test which happens to be the folder name you were using, change your folder name and that should resolve the conflict)
 
-<ins> No Push Access </ins>
-: Make sure you go through the steps listed in Section I.C.1 and have received access to the system
+<ins> No Push Access</ins>: Make sure you go through the steps listed in Section I.C.1 and have received access to the system
 
 If you run into any other issue or have any questions, please don’t hesitate to email us at coachbotswarmsystem@gmail.com.
 
