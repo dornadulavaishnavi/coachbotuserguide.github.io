@@ -1,6 +1,6 @@
 # Coachbot Swarm User Guide
 
-Written and Maintained by Vaishnavi Dornadula (vaishnavidornadula2026@u.northwestern.edu)
+Written and Maintained by Vaishnavi Dornadula (vaishnavidornadula2026@u.northwestern.edu)  
 Last Updated: February 19, 2024
 
 We ask that you respect the system and help us keep it accessible to fellow academics by adhering to the guidelines explained in this guide. We reserve the right to refuse access to any individuals who are not courteous to the system or the Coachbot team.
