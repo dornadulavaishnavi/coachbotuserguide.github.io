@@ -68,6 +68,7 @@ Example init_pose.csv file:
 If your init_pose.csv file does not abide by the rules above, you will receive an email and can check the input_pose_errors.csv file for details on where it failed. 
 
 #### User Code
+
 The user code file must be named usr_code.py and be written in python. This same code will be uploaded to every robot that will run your code. Section III below explains the available robot functions and various functionality such as sending messages and logging. Instead of a main function, the robot code will look for a function called usr(robot) so be sure to add that to your code as shown below. It is also good practice to add a small delay in the while loop (See Section III.A.8 for function specifics).
 
 usr_code.py format:
@@ -80,3 +81,140 @@ def usr(robot):
 return condition
 
 The current time limit for code runtime is 10 minutes so if your code hits this limit, it will pause the code and return all the information it received until that point.
+
+#### Email
+
+The email.txt file should simply contain the email address all alerts should be sent to. Users will receive an email notification when their code begins to run and one when it has completed. The User may also instead receive an email letting them know that their initial positions were invalid or their code hit the time limit.
+
+### GitHub INterface to the Coachbot System
+
+The github repo to submit your code is located at https://github.com/dornadulavaishnavi/CoachbotSwarm/tree/main. Your code should be uploaded to the Code_Queue folder in the main branch of the repo. To gain access to push code to this repo, please send us an email to be added as a collaborator. Once you have access, clone the repo to your local computer using https or ssh. To avoid merge conflicts, please remember to git pull before you try to upload your code. Copy your required files into a uniquely named folder and be sure to note this name, as this will be the name of the folder containing the output of your run.
+
+## Writing Code for the Coachbots
+
+Check out our API Overview tutorial here for a quick introduction: https://youtu.be/Z8qkd0gtyGM 
+
+### Available Robot Functions
+
+#### robot.set_vel(left,right)
+
+Parameters: left and right should be whole numbers between -50 and 50 that indicate wheel speeds corresponding to the respective wheel. 0 being no movement and 50 being the fastest possible speed. The negative values indicate that the wheel would spin backwards at that speed. These values have no unit.
+Output: none
+Example: robot.set_vel(30,-40)
+
+#### robot.set_led(r,g,b)
+
+Parameters: r,g,b should be integers between and 0 and 100 to set the color and brightness of the onboard LED
+Output: none
+Example: robot.set_led(30,100,0)
+
+#### robot.virtual_id()
+
+Parameters: none
+Output: An integer that is the virtual ID of the robot. 
+Example: virt_id = robot.virtual_id()
+
+#### robot.get_clock()
+
+Parameters: none
+Output: a float of the number of seconds elapsed since the program started
+Example: curr_time = robot.get_clock()
+
+#### robot.send_msg(msg)
+
+Parameters: msg should be a string that is less than 64 bytes or it will be truncated. This msg can be the output of the struct.pack() function explained in the section below.
+Output: True is successful, False if not
+Example: robot.send_msg(struct.pack(‘fffii’, float_0, float_1, float_2, int_0, int_1))
+
+#### robot.recv_msg()
+
+Parameters: none
+Output: Returns the messages in the buffer since the last call of this function. 
+Example: msgs = robot.recv_msg()
+
+#### robot.get_pose()
+
+Parameters: none
+Output: a list with the [x,y,theta], check to see that this output is valid before using it
+Example: pose = robot.get_pose()
+
+#### robot.delay()
+
+Parameters: default is 20ms but a different integer parameter can be specified
+Output: none
+Example: robot.delay(500)
+
+### Sending and Receiving Messages
+Sending and receiving messages is done through the robot.send_msg() and robot.recv_msg() functions explained above. The messages that these functions handle are created and read using struct.pack() and struct.unpack() so be sure to import struct at the top of your file if you plan to use messaging. For best results, add in a delay between any send and receive function calls. Example usage of these functions are shown below.
+
+Struct.pack() example:
+
+struct.pack(‘fffii’, float_0, float_1, float_2, int_0, int_1)
+
+The first argument, ‘fffii’, specifies the type of variables being sent in what order and quantity. In this example, I am sending three floats and two integers. The remaining parameters are the corresponding variables I am sending in the message
+
+Struct.unpack() example:
+
+struct.unpack(‘fffii’, msg_received[0][:24])
+
+The first argument, ‘fffii’ specifies the expected message content types. The second parameter specifies the variable I am reading from. Whatever variable I save the output of the robot.recv_msg() in will contain the entire buffer of messages. In this example, I am reading in the first message in the buffer and the [:24] specifies the message length, which is four times the number variables being sent.
+
+### Logging from the Robots
+
+Logging is a very useful debugging tool, especially in a swarm, where many robots are running the same code. To log messages from each robot, we write to a file instead of using print statements. These individual log files will be available to you after your code is run as explained in Section IV. In the usr_code.py file, add the following line of code to open the log file to write, log = open(“experiment_log”, “wb”). The variable name of log can be different but the file being opened must be called experiment_log and it must be opened in binary write mode as indicated by the wb. To write to this file, use the write function with a string as the parameter (log.write(string)). Be sure to include the new line character (\n) at the end of your string so that each of your statements are on a new line. After every write, call the flush function(log.flush()). Be sure to close the file before your script returns (log.close()). 
+
+## Getting the Results
+
+When your code has finished running, you will receive an email from the system letting you know so. When you pull the repo, the Completed_Runs folder will have your results in your folder with the files explained below.
+
+### Result Format
+
+Within this folder, you should see the following directory tree (new files and directories are underlined).
+	FolderName
+		usr_code.py
+		init_pose.csv
+		email.txt
+		init_pose_errors.csv
+		output_logs
+			ID_mapping.csv
+			camera_video.mp4
+		#_logging.csv
+		#
+		automation_errors
+The init_pose_errors.csv will contain the contents of init_pose.csv or list any issues with the initial poses specified. The output_logs folder will hold all the outputs from the algorithm run. Since the ID you specify in the init_pose.csv file might not match the physical robot ID, the ID_mapping.csv file specifies which robot corresponds to which virtual ID. The .mp4 file is the recording of the run from our overhead raspberry pi camera. The logging files (#_logging) will be named with the virtual ID of the robot it pertains to and contain the position of the corresponding robot at every timestep of the run. This csv file is formatted in a timestep, x position, y position, theta angle in radians for each line. The # file is the virtual ID of the pertaining robot and will have any information you choose to write to the experiment_log file in your code. The automation_errors file will list any high level errors such as runtime limits or robots trying to exit the play field.
+
+### Accessing the Output
+Once you get an email that your code has finished running, you will be able to access your code’s output files in the Completed_Runs folder of the repo. Use the git pull command to load the folders onto your local machine and navigate to the folder with the unique name you had uploaded to the Code_Queue folder. Once you copy the contents of your folder to somewhere outside your repo, please delete your folder from the Completed_Runs and push your code. (Remember to always pull before pushing to avoid merge conflicts).
+
+### Automation Error Messages:
+
+The automation_errors file will contain information of high level errors such as hitting the runtime limit or robots leaving the playfield. This will not have any errors your user code may hit so please be sure to use the logging features to assist with debugging. 
+
+Runtime limit: If you receive an email saying that your code hit the time limit, please make sure your code hits its return conditions properly or reduce the runtime of your code. You will still receive all the information above for the length of time your algorithm ran and access it in the same way.
+
+Robot out of Bounds: If you receive an email or see in your automation_errors file that some robots went out of bounds, please make sure that your code keeps the robots within the playfield. The message in the file should specify the offending robot and the position it left the field to help with debugging. You will still receive all the information above for the length of time your algorithm ran and access it in the same way.
+
+### Other Troubleshooting
+
+Git Merge Conflict: If you see this error on your local computer when you attempt to push your code folder, first make sure you have a copy of this folder and its contents somewhere on your local computer outside of the repo. If you encounter a git merge error, please do not override anything at the Head. This simply means that your local repo is not up to date with the remote repo and what you are trying to push directly affects these differences. The easiest way is to keep the changes at the Head and check that what you’re uploading has a different name than any of the newly pulled folders. (Ex. if someone uploaded a folder named swarm_test which happens to be the folder name you were using, change your folder name and that should resolve the conflict)
+
+No Push Access: Make sure you go through the steps listed in Section I.C.1 and have received access to the system
+
+If you run into any other issue or have any questions, please don’t hesitate to email us at coachbotswarmsystem@gmail.com.
+
+## Simulation
+
+Check out our Coachbot simulation here: https://github.com/michelleezhang/swarm-simulator. The README of this repo contains detailed instructions on how to download and use this tool.
+
+## Coachbot FAQ
+
+Q: The CoachbotSwarm Github repository says I do not have push access, how do I fix that?
+A: If you are unable to push to the repository, please make sure you have been granted contributor access. Email coachbotswarmsystem@gmail.com with your name, university (if applicable), and github username/email address you will be notified 
+
+Q: I submitted my experiment but I no longer see it on the repository queue and did not receive any emails regarding the status of my experiment. Is there something wrong with the submission?
+A: There could be a few reasons why there were no alerts about the experiment.  Double check your spam folder to ensure that any experiment alerts have not accidentally ended up there.
+The first most common reason would be that the swarm is currently charging and not running any experiments. In this case, the experiment is still queued up locally even if it is no longer on the repository’s queue. 
+The second reason could be that the system could not find an email.txt file to send notifications to. If  this is the case, it will still attempt to run the experiment and you can find your results in the “Completed_Runs” folder of the repository in a folder with the same name as your submission.
+
+Q: If I don’t care how many robots are used in my experiment or where they start, do I still need to submit an initial positions file?
+A: Yes, you will still need to submit an init_pose.csv file in your experiment for it to be run. Feel free to use the files provided in the Example Folder and edit as needed.
